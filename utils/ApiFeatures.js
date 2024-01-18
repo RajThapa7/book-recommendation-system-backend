@@ -1,6 +1,6 @@
 const getFilterQuery = (queryObj) => {
   // exclude fields to filter
-  const excludedFields = ["sort", "page", "limit", "order"];
+  const excludedFields = ["sort", "page", "limit", "order", "search"];
   excludedFields.forEach((el) => delete queryObj[el]);
 
   let queryStr = JSON.stringify(queryObj);

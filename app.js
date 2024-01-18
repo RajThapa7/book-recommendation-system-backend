@@ -32,11 +32,7 @@ app.use(corsMiddleware());
 
 //routes
 app.use(authRoutes);
-app.use(
-  passport.authenticate("jwt", {
-    session: false,
-  })
-);
+app.use(passport.authenticate("jwt", { session: false, failWithError: true }));
 app.use("/books", bookRoutes);
 app.use("/list", listRoutes);
 

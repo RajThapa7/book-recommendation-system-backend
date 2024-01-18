@@ -19,7 +19,7 @@ export default function () {
       const user = await User.findById(payload.id);
       return done(null, user);
     } catch (error) {
-      return done(new Error("UserNotFound"), null);
+      return done(error);
     }
   });
 

@@ -7,39 +7,45 @@ const handleDBDuplicateFields = (err) => {
 };
 
 const errorHandler = (error) => {
-  let errorObj = {};
-
+  if (error.message === "TokenExpired") {
+    const message = "Token Expired!!!";
+    return new AppError(message, 401);
+  }
+  if (error.name === "AuthenticationError") {
+    const message = "Unauthorized!!!";
+    return new AppError(message, 401);
+  }
   if (error.message === "Incorrect email") {
     const message = "The email is not registered";
-    errorObj = new AppError(message, 400);
+    return new AppError(message, 400);
   }
   if (error.message === "Incorrect password") {
     const message = "Incorrect password";
-    errorObj = new AppError(message, 400);
+    return new AppError(message, 400);
   }
 
   if (error.name === "CastError") {
     const message =
       "Record doesn't exists for the given id or the id is invalid";
-    errorObj = new AppError(message, 400);
+    return new AppError(message, 400);
     errorObj.isOperational = false;
   }
 
   if (error.name === "ValidationError") {
-    errorObj = new AppError(error.message, 400);
+    return new AppError(error.message, 400);
   }
 
   if (error.code === 11000) {
-    errorObj = handleDBDuplicateFields(error);
+    return handleDBDuplicateFields(error);
   }
+
+  return new AppError(error.message, 400);
 
   if (error.message.includes("user validation failed")) {
     Object.values(error.errors).forEach((item) => {
       errorObj[item.path] = item.properties.message;
     });
   }
-
-  return errorObj;
 };
 
 export default errorHandler;

@@ -40,7 +40,7 @@ const removeBookFromList = catchAsync(async (req, res) => {
   const list = await List.findOne({ user_id: userId });
 
   if (list.books.length === 0) {
-    return res.json({ msg: "You have no books in the list" });
+    return res.json({ message: "You have no books in the list" });
   }
 
   //finds the list for the given userId and removes the bookId from the books array that matches the bookId
@@ -48,7 +48,7 @@ const removeBookFromList = catchAsync(async (req, res) => {
     { user_id: userId },
     { $pull: { books: { $in: [new mongoose.Types.ObjectId(bookId)] } } }
   ).then(() => {
-    res.json({ msg: "Removed Successfully" });
+    res.json({ message: "Removed Successfully" });
   });
 });
 
@@ -61,9 +61,9 @@ const checkIfBookIsInList = catchAsync(async (req, res) => {
   });
 
   if (list !== null) {
-    return res.json({ status: true, msg: "Book is present in the list" });
+    return res.json({ status: true, message: "Book is present in the list" });
   }
-  res.json({ status: false, msg: "Book is not present in the list" });
+  res.json({ status: false, message: "Book is not present in the list" });
 });
 
 export {

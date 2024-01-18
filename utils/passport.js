@@ -87,10 +87,15 @@ passport.use(
     await User.findOne({ username: username })
       .then((user) => {
         if (!user)
-          return done(null, false, { message: "No user with that email" });
+          return done(null, false, {
+            message: "No user found with the given username",
+          });
         if (bcrypt.compareSync(password, user.password)) {
           return done(null, user);
-        } else return done(null, false, { message: "wrong password" });
+        } else
+          return done(null, false, {
+            message: "Username and Password did not match",
+          });
       })
       .catch((err) => {
         done(err);
