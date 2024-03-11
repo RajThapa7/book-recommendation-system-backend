@@ -57,6 +57,10 @@ const ApiFeatures = async (mongoQuery, req) => {
   //for eg ?average_ratings==10 ?average_ratings= >=10
   const filterQuery = getFilterQuery(req.query);
 
+  //get the total count of the documents inside the collection that matches the filter query
+  //we need to clone the query as single query instance cannot be executed more than once
+  const totalCount = await mongoQuery.countDocuments(filterQuery).clone();
+
   const results = await mongoQuery
     .find(filterQuery)
     .sort(sortCriteria)
@@ -65,8 +69,10 @@ const ApiFeatures = async (mongoQuery, req) => {
 
   return {
     ...(results.length === 0
-      ? { message: "there is no data to show", data: [] }
+      ? { message: "No data to show", data: [] }
       : {
+          totalCount,
+          totalPages: Math.ceil(totalCount / resultsPerPage),
           count: results.length,
           page: page + 1,
           data: results,
