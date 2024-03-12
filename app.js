@@ -10,7 +10,12 @@ import {
   errorLoggerMiddleware,
   invalidPathHandler,
 } from "./middleware/errorHandlerMiddleware.js";
-import { authRoutes, bookRoutes, listRoutes } from "./routes/index.js";
+import {
+  authRoutes,
+  bookRoutes,
+  listRoutes,
+  ratingRoutes,
+} from "./routes/index.js";
 import("./utils/passport.js");
 
 const app = express();
@@ -35,6 +40,7 @@ app.use(authRoutes);
 app.use(passport.authenticate("jwt", { session: false, failWithError: true }));
 app.use("/books", bookRoutes);
 app.use("/list", listRoutes);
+app.use("/ratings", ratingRoutes);
 
 //error handler middleware
 app.use(errorLoggerMiddleware);
