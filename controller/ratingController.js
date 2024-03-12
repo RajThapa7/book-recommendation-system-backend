@@ -11,17 +11,26 @@ const getAllRatingsOnBook = catchAsync(async (req, res) => {
 
   const ratingCount = [0, 0, 0, 0, 0];
   let totalRating = 0;
-  let currentUserRating = null;
-  totalData.forEach(({ rating, user_id }) => {
+  let currentUserRating;
+  let currentUserReview;
+
+  totalData.forEach(({ rating, user_id, review }) => {
     if (parseInt(userId) === user_id) {
-      currentUserRating = rating;
+      currentUserRating = rating || null;
+      currentUserReview = review || null;
     }
     totalRating += rating;
     ratingCount[rating - 1]++;
   });
   const average_rating = totalRating / totalData.length;
 
-  res.json({ currentUserRating, average_rating, ratingCount, ...result });
+  res.json({
+    currentUserRating,
+    currentUserReview,
+    average_rating,
+    ratingCount,
+    ...result,
+  });
 });
 
 const getUserRatingOnBook = catchAsync(async (req, res) => {
@@ -38,25 +47,35 @@ const getUserRatingOnBook = catchAsync(async (req, res) => {
 });
 
 const addUserRatingOnBook = catchAsync(async (req, res) => {
-  const { rating, bookId, userId } = req.body;
+  const { rating, bookId, userId, review } = req.body;
   const existingRating = await Rating.findOne({
     book_id: bookId,
     user_id: userId,
   });
 
   if (existingRating) {
-    const result = await Rating.findOneAndUpdate({ rating });
+    const result = await Rating.findOneAndUpdate(
+      { book_id: bookId, user_id: userId },
+      { rating, review },
+      { new: true }
+    );
     res.json({
       message: "Ratings updated successfully",
       rating: result.rating,
+      review: result.review,
     });
   } else {
     const result = await Rating.create({
       book_id: bookId,
       user_id: userId,
       rating,
+      review,
     });
-    res.json({ message: "Ratings added successfully", rating: result.rating });
+    res.json({
+      message: "Ratings added successfully",
+      rating: result.rating,
+      review: result.review,
+    });
   }
 });
 
