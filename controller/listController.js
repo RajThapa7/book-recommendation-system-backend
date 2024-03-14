@@ -10,11 +10,11 @@ const addBookToList = catchAsync(async (req, res) => {
 
   if (existingList) {
     // If the document already exists, update the array by pushing the new book_id
-    await List.updateOne(
+    const updatedList = await List.findOneAndUpdate(
       { user_id: userId },
-      { $addToSet: { books: bookId } } // Using $addToSet to avoid duplicate entries
+      { $addToSet: { books: bookId } }, // Using $addToSet to avoid duplicate entries
+      { new: true, fields: "-__v" }
     );
-    const updatedList = await List.findOne({ user_id: userId });
     res.json({ message: "Book added to list successfully", list: updatedList });
   } else {
     // If no document is found, create a new one
@@ -30,7 +30,7 @@ const getUserBookList = catchAsync(async (req, res) => {
   const { userId } = req.params;
   const booklist = await List.findOne(
     { user_id: userId },
-    "-user_id -_id"
+    "-user_id -_id -__v"
   ).populate("books");
   res.json(booklist);
 });
