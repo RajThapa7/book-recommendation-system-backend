@@ -30,7 +30,9 @@ const sendDevError = (err, res) => {
 
 //logging the error
 const errorLoggerMiddleware = (err, req, res, next) => {
+  console.log("<---- error starts --->");
   console.log(err);
+  console.log("<---- error ends --->");
   next(err); //passes to the next middleware
 };
 

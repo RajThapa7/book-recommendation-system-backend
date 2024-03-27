@@ -1,8 +1,8 @@
 import AppError from "./appError.js";
 
 const handleDBDuplicateFields = (err) => {
-  const value = err.message.match(/(["'])(?:(?=(\\?))\2.)*?\1/)[0];
-  const message = `Duplicate Field value: ${value}. Please use another value!`;
+  const value = Object.entries(err.keyValue)[0];
+  const message = `Duplicate Field value for ${value[0]}: ${value[1]}. Please use another value!`;
   return new AppError(message, 400);
 };
 

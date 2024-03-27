@@ -11,6 +11,7 @@ import {
   invalidPathHandler,
 } from "./middleware/errorHandlerMiddleware.js";
 import {
+  adminRoutes,
   authRoutes,
   bookRoutes,
   listRoutes,
@@ -41,6 +42,7 @@ app.use(passport.authenticate("jwt", { session: false, failWithError: true }));
 app.use("/books", bookRoutes);
 app.use("/list", listRoutes);
 app.use("/ratings", ratingRoutes);
+app.use("/admin", adminRoutes);
 
 //error handler middleware
 app.use(errorLoggerMiddleware);

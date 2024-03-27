@@ -13,7 +13,7 @@ const addBookToList = catchAsync(async (req, res) => {
     const updatedList = await List.findOneAndUpdate(
       { user_id: userId },
       { $addToSet: { books: bookId } }, // Using $addToSet to avoid duplicate entries
-      { new: true, fields: "-__v" }
+      { new: true, fields: "-__v" } // new: true makes sure we get the updated list not the stale one
     );
     res.json({ message: "Book added to list successfully", list: updatedList });
   } else {

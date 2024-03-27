@@ -4,6 +4,7 @@ const bookSchema = new mongoose.Schema({
   id: {
     type: Number,
     required: true,
+    unique: true,
   },
   book_id: {
     type: Number,
