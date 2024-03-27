@@ -15,10 +15,11 @@ const addBook = async (req, res, next) => {
     isbn,
     isbn13,
   } = req.body;
-  if (!req.files)
-    return res.status(400).json({ message: "Please Upload an image" });
 
   const cloudFile = await imageUpload(req, res);
+  if (cloudFile.error) {
+    return res.status(400).json({ message: cloudFile.error });
+  }
 
   try {
     const book = await Book.create({
@@ -54,10 +55,6 @@ const editBook = catchAsync(async (req, res) => {
     isbn13,
   } = req.body;
 
-  const book = await Book.findById(bookId);
-  if (!book) {
-    return res.status(400).json({ message: "No book found of the given id" });
-  }
   const updatedBook = await Book.findByIdAndUpdate(
     bookId,
     {

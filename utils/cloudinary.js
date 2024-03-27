@@ -17,18 +17,21 @@ const upload = async (file) => {
 };
 
 const imageUpload = async (req, res) => {
-  if (!req.files)
-    return res.status(400).json({ message: "Please Upload an image" });
+  if (!req.files) {
+    return {
+      error: "Please upload an image",
+    };
+  }
   const fileTypes = ["image/jpeg", "image/png", "image/jpg"];
 
   const { image } = req.files;
 
   if (!fileTypes.includes(image.mimetype))
-    return res.send("Image formats supported: JPG, PNG, JPEG");
+    return { error: "Image formats supported: JPG, PNG, JPEG" };
 
   const imageSize = 1024;
   if (image.size / 1024 > imageSize)
-    return res.send(`Image size should be less than ${imageSize}kb`);
+    return { error: `Image size should be less than ${imageSize}kb` };
 
   const cloudFile = await upload(image.tempFilePath);
   return cloudFile.secure_url;
