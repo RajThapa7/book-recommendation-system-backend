@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import fileUpload from "express-fileupload";
 import session from "express-session";
 import mongoose from "mongoose";
 import passport from "passport";
@@ -31,6 +32,7 @@ app.use(
     secret: "secret",
   })
 );
+app.use(fileUpload({ useTempFiles: true }));
 
 app.use(passport.initialize());
 authMiddleware();
