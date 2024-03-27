@@ -1,7 +1,10 @@
 import Book from "../model/bookModel.js";
+import User from "../model/userModel.js";
+import ApiFeatures from "../utils/ApiFeatures.js";
 import catchAsync from "../utils/catchAsync.js";
+import { deleteImageFromCloud, imageUpload } from "../utils/cloudinary.js";
 
-const addBook = catchAsync(async (req, res) => {
+const addBook = async (req, res, next) => {
   const {
     id,
     authors,
@@ -12,22 +15,32 @@ const addBook = catchAsync(async (req, res) => {
     isbn,
     isbn13,
   } = req.body;
+  if (!req.files)
+    return res.status(400).json({ message: "Please Upload an image" });
 
-  const book = await Book.create({
-    id,
-    authors,
-    isbn,
-    isbn13,
-    original_publication_year,
-    original_title,
-    title,
-    language_code,
-  });
-  res.json({
-    message: "Book Created Successfully",
-    book,
-  });
-});
+  const cloudFile = await imageUpload(req, res);
+
+  try {
+    const book = await Book.create({
+      id,
+      authors,
+      isbn,
+      isbn13,
+      original_publication_year,
+      original_title,
+      title,
+      language_code,
+      image_url: cloudFile,
+    });
+    res.json({
+      message: "Book Created Successfully",
+      book,
+    });
+  } catch (error) {
+    await deleteImageFromCloud(cloudFile);
+    next(error);
+  }
+};
 
 const editBook = catchAsync(async (req, res) => {
   const {
@@ -74,4 +87,10 @@ const deleteBook = catchAsync(async (req, res) => {
   res.json({ message: "Book Deleted Successfully", book });
 });
 
-export { addBook, deleteBook, editBook };
+const getAllUsers = catchAsync(async (req, res) => {
+  const query = User.find();
+  const result = await ApiFeatures(query, req);
+  res.json(result);
+});
+
+export { addBook, deleteBook, editBook, getAllUsers };
