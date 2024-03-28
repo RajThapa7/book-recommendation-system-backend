@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import Book from "../model/bookModel.js";
 import User from "../model/userModel.js";
 import ApiFeatures from "../utils/ApiFeatures.js";
@@ -40,6 +42,9 @@ const addBook = async (req, res, next) => {
   } catch (error) {
     await deleteImageFromCloud(cloudFile);
     next(error);
+  } finally {
+    // removes the temp file after the upload completion
+    fs.rmSync(path.resolve("tmp"), { recursive: true, force: true });
   }
 };
 
