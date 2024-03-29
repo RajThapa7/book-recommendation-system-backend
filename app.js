@@ -4,6 +4,7 @@ import fileUpload from "express-fileupload";
 import session from "express-session";
 import mongoose from "mongoose";
 import passport from "passport";
+import { adminAuthMiddleware } from "./middleware/adminAuthMiddleware.js";
 import authMiddleware from "./middleware/authMiddleware.js";
 import corsMiddleware from "./middleware/corsMiddleware.js";
 import {
@@ -12,6 +13,7 @@ import {
   invalidPathHandler,
 } from "./middleware/errorHandlerMiddleware.js";
 import {
+  adminAuthRoutes,
   adminRoutes,
   authRoutes,
   bookRoutes,
@@ -40,11 +42,12 @@ app.use(corsMiddleware());
 
 //routes
 app.use(authRoutes);
+app.use("/admin", adminAuthRoutes);
+app.use("/admin", adminAuthMiddleware, adminRoutes);
 app.use(passport.authenticate("jwt", { session: false, failWithError: true }));
 app.use("/books", bookRoutes);
 app.use("/list", listRoutes);
 app.use("/ratings", ratingRoutes);
-app.use("/admin", adminRoutes);
 
 //error handler middleware
 app.use(errorLoggerMiddleware);

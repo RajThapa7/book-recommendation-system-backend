@@ -20,6 +20,7 @@ const sendProdError = (err, res) => {
 
 //error to send in development mode
 const sendDevError = (err, res) => {
+  console.log(err, "error in send dev error");
   res.status(err.statusCode).json({
     status: err.status,
     error: err,

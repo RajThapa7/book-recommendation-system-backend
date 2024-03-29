@@ -2,7 +2,11 @@ import mongoose from "mongoose";
 import isEmail from "validator/lib/isEmail.js";
 
 const userSchema = new mongoose.Schema({
-  username: String,
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   email: {
     type: String,
     validate: [isEmail, "enter a valid email"],
@@ -16,6 +20,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  isAdmin: Boolean,
   password: String,
   userId: Number,
   profile_image: String,
