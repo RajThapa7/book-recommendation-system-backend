@@ -60,8 +60,6 @@ const recommendRelatedBooks = async (author, title, req) => {
 
   similarBooks.sort((a, b) => b.similarityScore - a.similarityScore);
 
-  console.log(page, "pge");
-
   const result = {
     totalCount: similarBooks.length,
     totalPages: Math.ceil(similarBooks.length / resultsPerPage),

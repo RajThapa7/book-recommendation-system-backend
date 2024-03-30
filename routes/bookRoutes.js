@@ -3,6 +3,7 @@ import {
   getAllBookList,
   getBookById,
   getBookRecommendation,
+  getBookRecommendationForSavedList,
   getRelatedBooks,
   searchBookList,
 } from "../controller/bookController.js";
@@ -14,6 +15,7 @@ router
   .get("/search", searchBookList)
   .get("/recommendations/:userId", getBookRecommendation)
   .post("/related", getRelatedBooks)
-  .get("/:bookId", getBookById);
+  .get("/:bookId", getBookById)
+  .post("/recommendations/list", getBookRecommendationForSavedList);
 
 export default router;

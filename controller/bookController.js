@@ -2,8 +2,17 @@ import Book from "../model/bookModel.js";
 import ApiFeatures from "../utils/ApiFeatures.js";
 import catchAsync from "../utils/catchAsync.js";
 import { recommendRelatedBooks } from "../utils/contentBasedRecommendation.js";
+import { suggestBooksFromArray } from "../utils/jacquardSimilarity.js";
 import { makeRecommendations } from "../utils/modelUtils.js";
 
+// get recommendation based on array of books
+const getBookRecommendationForSavedList = catchAsync(async (req, res) => {
+  const { books } = req.body;
+  const recommendations = await suggestBooksFromArray(books, req);
+  res.json(recommendations);
+});
+
+// get books related to a single book
 const getRelatedBooks = catchAsync(async (req, res) => {
   const { title, author } = req.body;
   const relatedBooks = await recommendRelatedBooks(author, title, req);
@@ -83,6 +92,7 @@ export {
   getAllBookList,
   getBookById,
   getBookRecommendation,
+  getBookRecommendationForSavedList,
   getRelatedBooks,
   searchBookList,
 };
