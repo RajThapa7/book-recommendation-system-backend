@@ -1,9 +1,13 @@
 import Book from "../model/bookModel.js";
+import Rating from "../model/ratingModel.js";
 import ApiFeatures from "../utils/ApiFeatures.js";
 import catchAsync from "../utils/catchAsync.js";
 import { recommendRelatedBooks } from "../utils/contentBasedRecommendation.js";
 import { suggestBooksFromArray } from "../utils/jacquardSimilarity.js";
-import { makeRecommendations } from "../utils/modelUtils.js";
+import {
+  hybridRecommendation,
+  makeRecommendations,
+} from "../utils/modelUtils.js";
 
 // get recommendation based on array of books
 const getBookRecommendationForSavedList = catchAsync(async (req, res) => {
@@ -56,6 +60,12 @@ const getBookRecommendation = catchAsync(async (req, res) => {
   });
 });
 
+const getTestBooks = catchAsync(async (req, res) => {
+  const books = await Book.find();
+  const rating = await Rating.find();
+  res.json({ data: hybridRecommendation(4, books, rating) });
+});
+
 const getAllBookList = catchAsync(async (req, res) => {
   //if using pagination just define the query don't call await
   const bookQuery = Book.find();
@@ -95,4 +105,5 @@ export {
   getBookRecommendationForSavedList,
   getRelatedBooks,
   searchBookList,
+  getTestBooks,
 };

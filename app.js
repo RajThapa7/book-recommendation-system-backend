@@ -44,7 +44,7 @@ app.use(corsMiddleware());
 app.use(authRoutes);
 app.use("/admin", adminAuthRoutes);
 app.use("/admin", adminAuthMiddleware, adminRoutes);
-app.use(passport.authenticate("jwt", { session: false, failWithError: true }));
+// app.use(passport.authenticate("jwt", { session: false, failWithError: true }));
 app.use("/books", bookRoutes);
 app.use("/list", listRoutes);
 app.use("/ratings", ratingRoutes);
