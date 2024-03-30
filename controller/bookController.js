@@ -2,6 +2,7 @@ import Book from "../model/bookModel.js";
 import ApiFeatures from "../utils/ApiFeatures.js";
 import catchAsync from "../utils/catchAsync.js";
 import { recommendRelatedBooks } from "../utils/contentBasedRecommendation.js";
+import { cosineRecommendBooks } from "../utils/cosine-similarity.js";
 import { suggestBooksFromArray } from "../utils/jacquardSimilarity.js";
 import { makeRecommendations } from "../utils/modelUtils.js";
 
@@ -18,6 +19,15 @@ const getRelatedBooks = catchAsync(async (req, res) => {
   const relatedBooks = await recommendRelatedBooks(author, title, req);
   res.json(relatedBooks);
 });
+const getRelatedBooksFromSavedListCosineSimilarity = catchAsync(
+  async (req, res) => {
+    const { list } = req.body;
+    const books = Book.find();
+    res.json({
+      list: cosineRecommendBooks(books, list),
+    });
+  }
+);
 
 const getBookRecommendation = catchAsync(async (req, res) => {
   const { userId } = req.params;
@@ -95,4 +105,5 @@ export {
   getBookRecommendationForSavedList,
   getRelatedBooks,
   searchBookList,
+  getRelatedBooksFromSavedListCosineSimilarity
 };
