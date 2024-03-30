@@ -1,7 +1,14 @@
 import Book from "../model/bookModel.js";
 import ApiFeatures from "../utils/ApiFeatures.js";
 import catchAsync from "../utils/catchAsync.js";
+import { recommendRelatedBooks } from "../utils/contentBasedRecommendation.js";
 import { makeRecommendations } from "../utils/modelUtils.js";
+
+const getRelatedBooks = catchAsync(async (req, res) => {
+  const { title, author } = req.body;
+  const relatedBooks = await recommendRelatedBooks(author, title, req);
+  res.json(relatedBooks);
+});
 
 const getBookRecommendation = catchAsync(async (req, res) => {
   const { userId } = req.params;
@@ -72,4 +79,10 @@ const searchBookList = catchAsync(async (req, res) => {
   res.json(result);
 });
 
-export { getAllBookList, getBookById, getBookRecommendation, searchBookList };
+export {
+  getAllBookList,
+  getBookById,
+  getBookRecommendation,
+  getRelatedBooks,
+  searchBookList,
+};
