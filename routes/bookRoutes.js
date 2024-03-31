@@ -18,6 +18,9 @@ router
   .post("/related", getRelatedBooks)
   .get("/:bookId", getBookById)
   .post("/recommendations/list", getBookRecommendationForSavedList)
-  .post("/related/cosinseSimilarity", getRelatedBooksFromSavedListCosineSimilarity);
+  .post(
+    "/related/cosineSimilarity",
+    getRelatedBooksFromSavedListCosineSimilarity
+  );
 
 export default router;

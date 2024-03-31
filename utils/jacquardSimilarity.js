@@ -45,12 +45,14 @@ async function suggestBooksFromArray(userBooks, req) {
   });
   similarBooks.sort((a, b) => b.averageSimilarity - a.averageSimilarity);
 
+  const recommendations = similarBooks.slice(userBooks.length);
+
   const result = {
-    totalCount: similarBooks.length,
-    totalPages: Math.ceil(similarBooks.length / resultsPerPage),
+    totalCount: recommendations.length,
+    totalPages: Math.ceil(recommendations.length / resultsPerPage),
     count: resultsPerPage,
     page: page + 1,
-    data: similarBooks.slice(
+    data: recommendations.slice(
       resultsPerPage * page,
       resultsPerPage * (page + 1)
     ),

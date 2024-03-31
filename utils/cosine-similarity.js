@@ -14,7 +14,10 @@ function cosineSimilarity(vec1, vec2) {
 
   return intersection / (mag1 * mag2);
 }
-export function cosineRecommendBooks(books, userSaveLists) {
+export function cosineRecommendBooks(books, userSaveLists, req) {
+  let page = (req.query.page >= 1 ? req.query.page : 1) - 1;
+  const resultsPerPage = req.query.limit || 10;
+
   const recommendations = [];
   for (const save of userSaveLists) {
     for (const book of books) {
@@ -34,11 +37,24 @@ export function cosineRecommendBooks(books, userSaveLists) {
       }
       const similarity = (titleSimilarity + authorSimilarity) / 2;
       recommendations.push({
-        book: book,
+        ...book.toObject(),
         similarity: similarity.toFixed(2),
       });
     }
   }
   recommendations.sort((a, b) => b.similarity - a.similarity);
-  return recommendations.slice(0, 10);
+
+  const similarBooks = recommendations.slice(userSaveLists.length);
+
+  const result = {
+    totalCount: similarBooks.length,
+    totalPages: Math.ceil(similarBooks.length / resultsPerPage),
+    count: resultsPerPage,
+    page: page + 1,
+    data: similarBooks.slice(
+      resultsPerPage * page,
+      resultsPerPage * (page + 1)
+    ),
+  };
+  return result;
 }

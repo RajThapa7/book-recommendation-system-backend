@@ -6,7 +6,7 @@ import { cosineRecommendBooks } from "../utils/cosine-similarity.js";
 import { suggestBooksFromArray } from "../utils/jacquardSimilarity.js";
 import { makeRecommendations } from "../utils/modelUtils.js";
 
-// get recommendation based on array of books
+// get recommendation based on array of books using jacquard algorithm
 const getBookRecommendationForSavedList = catchAsync(async (req, res) => {
   const { books } = req.body;
   const recommendations = await suggestBooksFromArray(books, req);
@@ -19,12 +19,14 @@ const getRelatedBooks = catchAsync(async (req, res) => {
   const relatedBooks = await recommendRelatedBooks(author, title, req);
   res.json(relatedBooks);
 });
+
+//recommendation based on array of book using cosine similarity
 const getRelatedBooksFromSavedListCosineSimilarity = catchAsync(
   async (req, res) => {
     const { list } = req.body;
     const books = await Book.find();
     res.json({
-      list: cosineRecommendBooks(books, list),
+      list: cosineRecommendBooks(books, list, req),
     });
   }
 );
@@ -104,6 +106,6 @@ export {
   getBookRecommendation,
   getBookRecommendationForSavedList,
   getRelatedBooks,
+  getRelatedBooksFromSavedListCosineSimilarity,
   searchBookList,
-  getRelatedBooksFromSavedListCosineSimilarity
 };
