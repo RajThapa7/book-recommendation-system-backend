@@ -16,28 +16,29 @@ function cosineSimilarity(vec1, vec2) {
 }
 export function cosineRecommendBooks(books, userSaveLists) {
   const recommendations = [];
-  console.log(books, userSaveLists);
   for (const save of userSaveLists) {
     for (const book of books) {
       let authorSimilarity = 0;
-      const titleSimilarity = cosineSimilarity(save.title, book.title);
-      if (book.author && save.author) {
-        authorSimilarity = cosineSimilarity(save.author, book.author);
+      if (save.isbn !== book.isbn) {
+        const titleSimilarity = cosineSimilarity(save.title, book.title);
+        if (book.author && save.author) {
+          authorSimilarity = cosineSimilarity(save.author, book.author);
+        }
+        if (book.authors && save.authors) {
+          authorSimilarity = cosineSimilarity(save.authors, book.authors);
+        }
+        if (!book.authors && save.authors) {
+          authorSimilarity = cosineSimilarity(save.authors, book.author);
+        }
+        if (book.authors && !save.authors) {
+          authorSimilarity = cosineSimilarity(save.author, book.authors);
+        }
+        const similarity = (titleSimilarity + authorSimilarity) / 2;
+        recommendations.push({
+          book: book,
+          similarity: similarity.toFixed(2),
+        });
       }
-      if (book.authors && save.authors) {
-        authorSimilarity = cosineSimilarity(save.authors, book.authors);
-      }
-      if (!book.authors && save.authors) {
-        authorSimilarity = cosineSimilarity(save.authors, book.author);
-      }
-      if (book.authors && !save.authors) {
-        authorSimilarity = cosineSimilarity(save.author, book.authors);
-      }
-      const similarity = (titleSimilarity + authorSimilarity) / 2;
-      recommendations.push({
-        book: book,
-        similarity: similarity.toFixed(2),
-      });
     }
   }
   recommendations.sort((a, b) => b.similarity - a.similarity);
