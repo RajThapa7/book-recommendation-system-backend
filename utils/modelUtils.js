@@ -32,12 +32,13 @@ async function makeRecommendations(userId) {
   return recommendations.arraySync();
 }
 function cosineSimilarity(vec1, vec2) {
-  if (vec1.length !== vec2.length) {
-    throw new Error("Vectors must have the same length");
-  }
-  const dotProduct = vec1.reduce((acc, val, i) => acc + val * vec2[i], 0);
+  console.log(vec1, vec2);
+  let testvec2 = [...vec2.map((p) => (isNaN(p) ? 0 : p))];
+  const dotProduct = vec1.reduce((acc, val, i) => acc + val * testvec2[i], 0);
   const magnitude1 = Math.sqrt(vec1.reduce((acc, val) => acc + val * val, 0));
-  const magnitude2 = Math.sqrt(vec2.reduce((acc, val) => acc + val * val, 0));
+  const magnitude2 = Math.sqrt(
+    testvec2.reduce((acc, val) => acc + val * val, 0)
+  );
   if (magnitude1 === 0 || magnitude2 === 0) {
     return 0;
   }
@@ -45,7 +46,7 @@ function cosineSimilarity(vec1, vec2) {
 }
 
 // Collaborative Filtering: Get top N similar users to the target user
-function getSimilarUsers(ratingData, targetUserId, numSimilarUsers = 2) {
+function getSimilarUsers(ratingData, targetUserId, numSimilarUsers = 10) {
   const targetUserRatings = ratingData.filter(
     (rating) => rating.user_id === targetUserId
   );
@@ -56,9 +57,7 @@ function getSimilarUsers(ratingData, targetUserId, numSimilarUsers = 2) {
         Object.values(targetUserRatings).map((rating) =>
           parseFloat(rating.rating)
         ),
-        Object.values(rating)
-          .slice(2)
-          .map((rating) => parseFloat(rating.rating)) // Ratings of the current user
+        Object.values(rating).map((rating) => parseFloat(rating.rating)) // Ratings of the current user
       );
 
       if (!similarUsers.has(rating.user_id)) {
@@ -74,6 +73,7 @@ function getSimilarUsers(ratingData, targetUserId, numSimilarUsers = 2) {
       similarities.reduce((acc, val) => acc + val, 0) / similarities.length;
     averageSimilarities.push({ userId, similarity: averageSimilarity });
   });
+  console.log(averageSimilarities);
   averageSimilarities.sort((a, b) => b.similarity - a.similarity);
   return averageSimilarities.slice(0, numSimilarUsers);
 }
