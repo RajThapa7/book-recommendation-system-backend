@@ -63,7 +63,7 @@ const getBookRecommendation = catchAsync(async (req, res) => {
 const getTestBooks = catchAsync(async (req, res) => {
   const books = await Book.find();
   const rating = await Rating.find();
-  res.json({ data: hybridRecommendation(7, books, rating) });
+  res.json({ data: hybridRecommendation(8, books, rating) });
 });
 
 const getAllBookList = catchAsync(async (req, res) => {

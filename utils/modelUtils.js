@@ -31,49 +31,70 @@ async function makeRecommendations(userId) {
   //returns a 2D array from the tensor value
   return recommendations.arraySync();
 }
+// Function to calculate cosine similarity between two vectors
 function cosineSimilarity(vec1, vec2) {
-  console.log(vec1, vec2);
-  let testvec2 = [...vec2.map((p) => (isNaN(p) ? 0 : p))];
-  const dotProduct = vec1.reduce((acc, val, i) => acc + val * testvec2[i], 0);
-  const magnitude1 = Math.sqrt(vec1.reduce((acc, val) => acc + val * val, 0));
-  const magnitude2 = Math.sqrt(
-    testvec2.reduce((acc, val) => acc + val * val, 0)
-  );
-  if (magnitude1 === 0 || magnitude2 === 0) {
+  let dotProduct = 0;
+  let magnitude1 = 0;
+  let magnitude2 = 0;
+  let nonZeroCount1 = 0; // Count non-zero elements in vec1
+  let nonZeroCount2 = 0; // Count non-zero elements in vec2
+
+  for (let i = 0; i < vec1.length; i++) {
+    const val1 = parseFloat(vec1[i].rating);
+    const val2 = parseFloat(vec2[i]);
+
+    if (!isNaN(val1) && !isNaN(val2)) {
+      dotProduct += val1 * val2;
+      magnitude1 += val1 * val1;
+      magnitude2 += val2 * val2;
+      nonZeroCount1++;
+      nonZeroCount2++;
+    }
+  }
+
+  // Handle cases where one or both vectors have no non-zero elements
+  if (nonZeroCount1 === 0 || nonZeroCount2 === 0) {
     return 0;
   }
+
+  // Calculate magnitudes
+  magnitude1 = Math.sqrt(magnitude1);
+  magnitude2 = Math.sqrt(magnitude2);
+
+  // Calculate cosine similarity
   return dotProduct / (magnitude1 * magnitude2);
 }
 
-// Collaborative Filtering: Get top N similar users to the target user
-function getSimilarUsers(ratingData, targetUserId, numSimilarUsers = 10) {
+function getSimilarUsers(ratingData, targetUserId, numSimilarUsers = 2) {
   const targetUserRatings = ratingData.filter(
-    (rating) => rating.user_id === targetUserId
+    (p) => p.user_id === targetUserId
   );
   const similarUsers = new Map();
+
   ratingData.forEach((rating) => {
     if (rating.user_id !== targetUserId) {
+      // Filter ratings for the current user and parse to numbers
+      const currentUserRatings = ratingData
+        .filter((r) => r.user_id === rating.user_id)
+        .map((r) => parseFloat(r.rating));
       const similarity = cosineSimilarity(
-        Object.values(targetUserRatings).map((rating) =>
-          parseFloat(rating.rating)
-        ),
-        Object.values(rating).map((rating) => parseFloat(rating.rating)) // Ratings of the current user
+        Object.values(targetUserRatings), // Use original target ratings (no filtering)
+        currentUserRatings
       );
 
       if (!similarUsers.has(rating.user_id)) {
         similarUsers.set(rating.user_id, []);
       }
-
       similarUsers.get(rating.user_id).push(similarity);
     }
   });
+
   const averageSimilarities = [];
   similarUsers.forEach((similarities, userId) => {
     const averageSimilarity =
       similarities.reduce((acc, val) => acc + val, 0) / similarities.length;
     averageSimilarities.push({ userId, similarity: averageSimilarity });
   });
-  console.log(averageSimilarities);
   averageSimilarities.sort((a, b) => b.similarity - a.similarity);
   return averageSimilarities.slice(0, numSimilarUsers);
 }
