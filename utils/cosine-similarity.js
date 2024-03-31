@@ -16,7 +16,6 @@ function cosineSimilarity(vec1, vec2) {
 }
 export function cosineRecommendBooks(books, userSaveLists) {
   const recommendations = [];
-  console.log(books, userSaveLists);
   for (const save of userSaveLists) {
     for (const book of books) {
       let authorSimilarity = 0;
