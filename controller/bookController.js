@@ -22,7 +22,7 @@ const getRelatedBooks = catchAsync(async (req, res) => {
 const getRelatedBooksFromSavedListCosineSimilarity = catchAsync(
   async (req, res) => {
     const { list } = req.body;
-    const books = Book.find();
+    const books = await Book.find();
     res.json({
       list: cosineRecommendBooks(books, list),
     });
