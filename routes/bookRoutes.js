@@ -5,6 +5,7 @@ import {
   getBookRecommendation,
   getBookRecommendationForSavedList,
   getRelatedBooks,
+  getRelatedBooksFromSavedListCosineSimilarity,
   searchBookList,
 } from "../controller/bookController.js";
 
@@ -17,6 +18,6 @@ router
   .post("/related", getRelatedBooks)
   .get("/:bookId", getBookById)
   .post("/recommendations/list", getBookRecommendationForSavedList)
-  .post("/related/list", getRelatedBooksFromSavedListCosineSimilarity);
+  .post("/related/cosinseSimilarity", getRelatedBooksFromSavedListCosineSimilarity);
 
 export default router;
