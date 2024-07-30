@@ -32,6 +32,10 @@ const getUserBookList = catchAsync(async (req, res) => {
     { user_id: userId },
     "-user_id -_id -__v"
   ).populate("books");
+  if (booklist === null) {
+    res.json({ books: [], message: "Your List is empty" });
+    return;
+  }
   res.json(booklist);
 });
 
